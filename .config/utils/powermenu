@@ -4,7 +4,7 @@ chosen=$(echo "Log Out\nReboot\nPower Off" | rofi -dmenu -i -p "⏻ " -theme-str
 
 case $chosen in
     "Log Out")
-        herbstclient quit
+        i3-msg exit
         ;;
     "Reboot")
         reboot
