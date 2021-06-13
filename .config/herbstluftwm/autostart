@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 
-# this is a simple config for herbstluftwm
+# config for herbstluftwm
+# 2021-05-01 Add dunst notification daemon
+# 2021-05-02 Add rule for "VirtualBox Machine" ➔ tag: remote
+# 2021-05-28 Detect right-top edge and position mouse there
+# 2021-06-05 Update to 0.9.3: The setting default_frame_layout now holds
+#            an algorithm name
 
 hc() {
     herbstclient "$@"
@@ -17,26 +22,22 @@ hc emit_hook reload
 
 xsetroot -solid '#19202A'
 
-##run picom
-##run nitrogen --restore
+# start conky
 run conky --daemonize --pause=1
-##run xfce4-power-manager
-##run dunst
-##run greenclip daemon
+
+# start notification daemon (moved from .xprofile to fix font size being too big)
+dunst &
 
 if hc silent new_attr bool my_not_first_autostart ; then
-    ## systemctl --user start greenclip.service
     synology-cloud-station-drive autostart &
-    # run checkupdates to initialize /tmp/pacman_updates.count
-    # checkupdates 2> /dev/null | wc -l > /tmp/pacman_updates.count &
-    ## /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 fi
 
 # remove all existing keybindings
 hc keyunbind --all
 
 # keybindings ( Mod1 = Alt; Mod4 = Super )
-Mod=Mod4   # Use the super key as the main modifier
+# Use the super key as the main modifier
+Mod=Mod4
 terminal=alacritty
 
 hc keybind $Mod-Shift-q quit
@@ -72,6 +73,7 @@ hc keybind $Mod-Shift-l     shift right
 # create an empty frame at the specified direction
 hc keybind $Mod-u       split   bottom  0.5
 hc keybind $Mod-o       split   right   0.5
+hc keybind $Mod-Control-o       split   right   0.66
 # let the current frame explode into subframes
 hc keybind $Mod-Control-space split explode
 
@@ -87,14 +89,15 @@ hc keybind $Mod-Control-Up      resize up +$resizestep
 hc keybind $Mod-Control-Right   resize right +$resizestep
 
 # move to monitor
-hc keybind $Mod-Mod1-Right shift_to_monitor +1
-hc keybind $Mod-Mod1-Left  shift_to_monitor -1
+hc keybind $Mod-Shift-BackSpace shift_to_monitor +1
+#hc keybind $Mod-Mod1-Right shift_to_monitor +1
+#hc keybind $Mod-Mod1-Left  shift_to_monitor -1
 
 # default frame layout: 0 vertical | 1 horizontal | 2 max | 3 grid
-hc set default_frame_layout 1
+hc set default_frame_layout horizontal 
 
 # tags
-tag_names=( "main" "2" "3" "4" "www" "6" "7" "media" "remote" )
+tag_names=( "1" "2" "3" "4" "5" "6" "7" "8" "9" )
 #tag_names=( {1..9} )
 tag_keys=( {1..9} 0 )
 
@@ -107,6 +110,13 @@ for i in "${!tag_names[@]}" ; do
         hc keybind "$Mod-Shift-$key" move_index "$i"
     fi
 done
+
+# set default layout for 1st frame to horizontal
+# default_frame_layout does not apply for this frame
+hc load ${tag_names[0]} '(clients horizontal:0)'
+
+# set default layout for "www" tag to max
+# hc load "www" '(clients max:0)'
 
 # cycle through tags
 hc keybind $Mod-period use_index +1 --skip-visible
@@ -165,7 +175,7 @@ hc attr theme.active.inner_color '#3E4A00'
 hc attr theme.active.outer_color '#3E4A00'
 hc attr theme.background_color '#141414'
 
-hc set window_gap 0
+hc set window_gap 1
 hc set frame_padding 0
 hc set smart_window_surroundings off
 hc set smart_frame_surroundings on
@@ -182,15 +192,19 @@ hc rule floatplacement=smart
 #hc rule class~'(.*[Rr]xvt.*|.*[Tt]erm|Konsole)' focus=on
 
 # Clients with fixed tags
+hc rule class=Code tag=code switchtag=on
 hc rule class=Clementine tag=media
 hc rule class=Opera tag=www
 hc rule class=org.remmina.Remmina tag=remote
+hc rule class="VirtualBox Machine" tag=remote
 
 # floating clients
 hc rule class=Galculator    floating=on floatplacement=smart
 hc rule class=Gucharmap     floating=on floatplacement=smart
 hc rule class=gl            floating=on floatplacement=smart
 hc rule class=Lxappearance  floating=on floatplacement=smart
+hc rule class=matplotlib    floating=on floatplacement=smart
+hc rule class=Matplotlib    floating=on floatplacement=smart
 hc rule class=mpv           floating=on floatplacement=smart
 hc rule class=Seahorse      floating=on floatplacement=center
 
@@ -199,6 +213,7 @@ hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG' focus=on
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK|DESKTOP)' manage=off
 
 hc set tree_style '╾│ ├└╼─┐'
+hc set swap_monitors_to_get_tag 1
 
 # unlock, just to be sure
 hc unlock
@@ -211,3 +226,7 @@ hc detect_monitors
 # start polybar panels
 ~/.config/polybar/panel.sh &
 
+# set focus to first monitor and position mouse top right
+hc focus_monitor 0
+xpos=$(hc list_monitors | rg "0:" | awk -F "x" '{ print $1 }' | awk '{ print $2-30 }')
+xte "mousemove $xpos 30"
