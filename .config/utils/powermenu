@@ -1,10 +1,10 @@
 #!/bin/zsh
 
-chosen=$(echo "Log Out\nReboot\nPower Off" | rofi -dmenu -i -p "⏻ " -theme-str 'entry { enabled: false;}' -l 3 -width 15 -location 0 -yoffset -150)
+chosen=$(echo "Log Out\nReboot\nPower Off" | rofi -dmenu -i -p "⏻ " -theme-str 'entry {enabled: false;} window {width: 15%;}' -l 3 -location 0 -yoffset -150 -no-show-icons)
 
 case $chosen in
     "Log Out")
-        i3-msg exit
+        herbstclient quit
         ;;
     "Reboot")
         reboot

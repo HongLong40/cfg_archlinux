@@ -1,12 +1,10 @@
 /******************************************************************************
  * ROFI Color theme
- * User: Edward
+ * User: Rasi
  * Copyright: Rasmus Steinke
  ******************************************************************************/
 * {
-    selected-normal-foreground:  #101010;
-    selected-normal-background:  #ba4705;
-    prompt-background:           #51afef;
+    selected-normal-foreground:  #101010; 
     foreground:                  rgba ( 129, 147, 150, 100 % );
     normal-foreground:           @foreground;
     alternate-normal-background: rgba ( 0, 43, 55, 100 % );
@@ -24,6 +22,7 @@
     alternate-normal-foreground: @foreground;
     normal-background:           rgba ( 0, 43, 55, 100 % );
     lightfg:                     rgba ( 88, 104, 117, 100 % );
+    selected-normal-background:  #ba4705;
     border-color:                @foreground;
     spacing:                     2;
     separatorcolor:              rgba ( 0, 54, 66, 100 % );
@@ -39,10 +38,11 @@ window {
     background-color: @background;
     border:           1;
     padding:          2 2 2 2;
+    width:            54%;
 }
 mainbox {
     border:  1;
-    padding: 1 10 10 10;
+    padding: 10 10 10 10;
 }
 message {
     border:       1px dash 0px 0px ;
@@ -56,13 +56,17 @@ listview {
     fixed-height: 0;
     border:       2px dash 0px 0px ;
     border-color: @separatorcolor;
-    spacing:      5px ;
+    spacing:      2px ;
     scrollbar:    true;
     padding:      2px 0px 0px ;
 }
 element {
     border:  0;
     padding: 1px ;
+}
+element-text {
+    background-color: inherit;
+    text-color:       inherit;
 }
 element.normal.normal {
     background-color: @normal-background;
@@ -128,8 +132,8 @@ entry {
     text-color: @normal-foreground;
 }
 prompt {
-    spacing:          0;
-    text-color:       @normal-foreground;
+    spacing:    0;
+    text-color: @normal-foreground;
 }
 inputbar {
     children:   [ prompt,textbox-prompt-colon,entry,case-indicator ];

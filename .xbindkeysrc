@@ -60,11 +60,11 @@
 
 
 # Open Browser
-"opera"
+"brave"
     Mod2+Mod4 + b
 
 # Open Browser --Private Mode
-"opera --private"
+"brave --incogito"
     Shift+Mod2+Mod4 + b
 
 # Capture Screen
