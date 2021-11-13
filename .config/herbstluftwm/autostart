@@ -1,34 +1,44 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 # config for herbstluftwm
 # 2021-05-01 Add dunst notification daemon
-# 2021-05-02 Add rule for "VirtualBox Machine" ➔ tag: remote
+# 2021-05-02 Add rule for "VirtualBox Machine" → tag: remote
 # 2021-05-28 Detect right-top edge and position mouse there
-# 2021-06-05 Update to 0.9.3: The setting default_frame_layout now holds
-#            an algorithm name
+# 2021-06-05 Update to 0.9.3: The setting default_frame_layout now holds an algorithm name
+# 2021-10-03 changed floatplacement for dialogs; mpv
+# 2021-10-09 changed floating border width and inactive color
+# 2021-10-10 reset workspace name to standard [1..9]
+#            removed arrow keys for frame & window navigation (use hjkl keys only)
+# 2021-10-13 modified various theme elements
+# 2021-10-14 cleaned up theme elements
+# 2021-10-15 reset movement keybinds to use arrow keys
+#            added keybinds to set layouts horizontal, vertical and max directly
+# 2021-10-16 moved all application keybinds back to HLWM; misc. tweaks
+# 2021-10-19 use $Mod-space for rofi application menu; $Mod-l to cycle layouts
+# 2021-10-23 added watch tags.focus.tiling.focused_frame.algorithm
+# 2021-10-31 don't run conky
+# 2021-11-09 moved dunst startup to bottom of script, to ensure that window manager has started
+# 2021-11-11 moved dunst to panel.sh script, to better intergrate with polybar handling
+#            start xfce4-power-manager here instead of in ~/.xprofile, as it requires the notification
+#            daemon (dunst) which itself requires X to be running and have $DISPLAY set.
 
-hc() {
-    herbstclient "$@"
-}
+hc() { herbstclient "$@" }
 
-run() {
-    if ! pgrep -f $1 ;
-    then
-        $@&
-    fi
-}
+run() { if ! pgrep -f $1 ; then $@&; fi }
 
 hc emit_hook reload
 
 xsetroot -solid '#19202A'
 
 # start conky
-run conky --daemonize --pause=1
+#run conky --daemonize --pause=1
 
-# start notification daemon (moved from .xprofile to fix font size being too big)
-dunst &
+# start power manager
+run xfce4-power-manager
 
-if hc silent new_attr bool my_not_first_autostart ; then
+# set focus to first monitor and position mouse top right
+if hc silent new_attr bool my_not_first_autostart
+then
     synology-cloud-station-drive autostart &
 fi
 
@@ -38,15 +48,33 @@ hc keyunbind --all
 # keybindings ( Mod1 = Alt; Mod4 = Super )
 # Use the super key as the main modifier
 Mod=Mod4
-terminal=alacritty
 
 hc keybind $Mod-Shift-q quit
 hc keybind $Mod-Shift-r reload
 hc keybind $Mod-Shift-c close
-hc keybind Mod4-Shift-x spawn ~/.config/utils/powermenu
-hc keybind $Mod-Return spawn $terminal # use your $TERMINAL with xterm as fallback
+hc keybind $Mod-Shift-x spawn $HOME/.config/utils/powermenu
+hc keybind $Mod-Shift-z spawn betterlockscreen -l
 
-## Application keybindings have been moved to xbindkeys
+hc keybind $Mod-Return  spawn alacritty
+
+# Application keybindings
+hc keybind $Mod-space   spawn rofi -show combi
+hc keybind $Mod-p       spawn rofi -modi "clipboard:greenclip print" -show clipboard -run-command '{cmd}'
+
+hc keybind $Mod-b       chain : lock : use_index 4 : spawn brave : unlock             # browser → tag 5
+hc keybind $Mod-Shift-b chain : lock : use_index 5 : spawn brave --incognito : unlock # browser (private) → tag 6
+
+hc keybind Print          spawn flameshot gui  # screen capture
+hc keybind XF86Calculator spawn galculator     # calculator
+
+# Volume Control
+hc keybind $Mod-Control-v spawn pavucontrol
+hc keybind $Mod-Shift-v   spawn $HOME/.config/utils/switchaudio
+
+hc keybind XF86AudioMute        spawn pactl set-sink-mute @DEFAULT_SINK@ toggle
+hc keybind XF86AudioRaiseVolume spawn pactl set-sink-volume @DEFAULT_SINK@ +1%
+hc keybind XF86AudioLowerVolume spawn pactl set-sink-volume @DEFAULT_SINK@ -1%
+hc keybind XF86AudioPlay        spawn playerctl play-pause
 
 # basic movement in tiling and floating mode
 # focusing clients
@@ -54,84 +82,80 @@ hc keybind $Mod-Left  focus left
 hc keybind $Mod-Down  focus down
 hc keybind $Mod-Up    focus up
 hc keybind $Mod-Right focus right
-hc keybind $Mod-h     focus left
-hc keybind $Mod-j     focus down
-hc keybind $Mod-k     focus up
-hc keybind $Mod-l     focus right
 
-# moving clients in tiling and floating mode
-hc keybind $Mod-Shift-Left  shift left
-hc keybind $Mod-Shift-Down  shift down
-hc keybind $Mod-Shift-Up    shift up
-hc keybind $Mod-Shift-Right shift right
-hc keybind $Mod-Shift-h     shift left
-hc keybind $Mod-Shift-j     shift down
-hc keybind $Mod-Shift-k     shift up
-hc keybind $Mod-Shift-l     shift right
+# moving clients
+hc keybind $Mod-Shift-Left   shift left
+hc keybind $Mod-Shift-Down   shift down
+hc keybind $Mod-Shift-Up     shift up
+hc keybind $Mod-Shift-Right  shift right
 
 # splitting frames
-# create an empty frame at the specified direction
-hc keybind $Mod-u       split   bottom  0.5
-hc keybind $Mod-o       split   right   0.5
-hc keybind $Mod-Control-o       split   right   0.66
+# create and focus an empty frame at the specified direction
+hc keybind $Mod-u          chain : split bottom 0.5  : focus down
+hc keybind $Mod-o          chain : split right  0.5  : focus right
+hc keybind $Mod-Control-o  chain : split right  0.66 : focus right
+
 # let the current frame explode into subframes
 hc keybind $Mod-Control-space split explode
 
 # resizing frames and floating clients
 resizestep=0.02
-hc keybind $Mod-Control-h       resize left +$resizestep
-hc keybind $Mod-Control-j       resize down +$resizestep
-hc keybind $Mod-Control-k       resize up +$resizestep
-hc keybind $Mod-Control-l       resize right +$resizestep
-hc keybind $Mod-Control-Left    resize left +$resizestep
-hc keybind $Mod-Control-Down    resize down +$resizestep
-hc keybind $Mod-Control-Up      resize up +$resizestep
-hc keybind $Mod-Control-Right   resize right +$resizestep
+hc keybind $Mod-Control-Left   resize left  +$resizestep
+hc keybind $Mod-Control-Down   resize down  +$resizestep
+hc keybind $Mod-Control-Up     resize up    +$resizestep
+hc keybind $Mod-Control-Right  resize right +$resizestep
 
-# move to monitor
+# focus or move to monitor
+hc keybind $Mod-BackSpace       cycle_monitor
 hc keybind $Mod-Shift-BackSpace shift_to_monitor +1
-#hc keybind $Mod-Mod1-Right shift_to_monitor +1
-#hc keybind $Mod-Mod1-Left  shift_to_monitor -1
 
 # default frame layout: 0 vertical | 1 horizontal | 2 max | 3 grid
 hc set default_frame_layout horizontal 
 
 # tags
-tag_names=( "1" "2" "3" "4" "5" "6" "7" "8" "9" )
-#tag_names=( {1..9} )
-tag_keys=( {1..9} 0 )
+tag_names=( {1..9} )
+typeset -i ws_index=0 # use this to set workspace indices, as zsh arrays are 1-based
 
-hc rename default "${tag_names[0]}" || true
-for i in "${!tag_names[@]}" ; do
-    hc add "${tag_names[$i]}"
-    key="${tag_keys[$i]}"
-    if ! [ -z "$key" ] ; then
-        hc keybind "$Mod-$key" use_index "$i"
-        hc keybind "$Mod-Shift-$key" move_index "$i"
+hc rename default ${tag_names[1]} 2>/dev/null  || true
+for (( i = 1; i <= $#tag_names; i++ ))
+do
+    hc add ${tag_names[$i]}
+    if [[ $i -le 9 ]] ; then
+        hc keybind "$Mod-$i" use_index $ws_index
+        hc keybind "$Mod-Shift-$i" move_index $ws_index
+        (( ws_index++ ))
     fi
 done
 
 # set default layout for 1st frame to horizontal
 # default_frame_layout does not apply for this frame
-hc load ${tag_names[0]} '(clients horizontal:0)'
+hc load ${tag_names[1]} '(clients horizontal:0)'
 
-# set default layout for "www" tag to max
-# hc load "www" '(clients max:0)'
+# set default layout for tags "4", "5" and "6" to max
+hc load ${tag_names[4]} '(clients max:0)'
+hc load ${tag_names[5]} '(clients max:0)'
+hc load ${tag_names[6]} '(clients max:0)'
 
 # cycle through tags
 hc keybind $Mod-period use_index +1 --skip-visible
 hc keybind $Mod-comma  use_index -1 --skip-visible
 
 # layout
-hc keybind $Mod-r remove
-hc keybind $Mod-s floating toggle
-hc keybind $Mod-f fullscreen toggle
-hc keybind $Mod-Shift-f set_attr clients.focus.floating toggle
+hc keybind $Mod-r       remove
+hc keybind $Mod-s       floating   toggle
+hc keybind $Mod-f       set_attr   clients.focus.floating toggle
+hc keybind $Mod-Shift-f fullscreen toggle
 hc keybind $Mod-Shift-p pseudotile toggle
+
+hc keybind $Mod-g set_layout grid
+hc keybind $Mod-h set_layout horizontal
+hc keybind $Mod-m set_layout max
+hc keybind $Mod-v set_layout vertical
+
 # The following cycles through the available layouts within a frame, but skips
 # layouts, if the layout change wouldn't affect the actual window positions.
 # I.e. if there are two windows within a frame, the grid layout is skipped.
-hc keybind $Mod-space                                                           \
+hc keybind $Mod-l                                                           \
             or , and . compare tags.focus.curframe_wcount = 2                   \
                      . cycle_layout +1 vertical horizontal max vertical grid    \
                , cycle_layout +1
@@ -143,7 +167,6 @@ hc mousebind $Mod-Button2 zoom
 hc mousebind $Mod-Button3 resize
 
 # focus
-hc keybind $Mod-BackSpace   cycle_monitor
 hc keybind $Mod-Tab         cycle_all +1
 hc keybind $Mod-Shift-Tab   cycle_all -1
 hc keybind $Mod-c cycle
@@ -152,31 +175,43 @@ hc keybind $Mod-i jumpto urgent
 # theme
 hc attr theme.tiling.reset 1
 hc attr theme.floating.reset 1
-hc set frame_border_active_color '#222222'
-hc set frame_border_normal_color '#101010'
-hc set frame_bg_normal_color '#565656'
-hc set frame_bg_active_color '#345F0C'
-hc set frame_border_width 1
-hc set always_show_frame off
-hc set frame_bg_transparent on
-hc set frame_transparent_width 2
-hc set frame_gap 2
-
-hc attr theme.active.color '#AA00AA'
-hc attr theme.normal.color '#454545'
-hc attr theme.urgent.color orange
-hc attr theme.inner_width 1
-hc attr theme.inner_color black
-hc attr theme.border_width 2
-hc attr theme.floating.border_width 2
-hc attr theme.floating.outer_width 1
-hc attr theme.floating.outer_color black
-hc attr theme.active.inner_color '#3E4A00'
-hc attr theme.active.outer_color '#3E4A00'
 hc attr theme.background_color '#141414'
 
-hc set window_gap 1
+# frame
 hc set frame_padding 0
+hc set frame_gap 6
+hc set frame_border_width 1
+hc set frame_transparent_width 4
+
+hc set always_show_frame on
+hc set frame_bg_transparent on
+
+hc set frame_border_active_color '#AA00AA'
+hc set frame_bg_active_color     '#555555'
+hc set frame_border_normal_color '#101010'
+hc set frame_bg_normal_color     '#004000'
+
+# window border: border_width = inner_width + outer_width + {remaining width (color)}
+hc attr theme.border_width 3
+hc attr theme.inner_width 1
+hc attr theme.outer_width 1
+hc attr theme.floating.border_width 6
+
+# colors
+hc attr theme.inner_color        '#202020'
+hc attr theme.active.inner_color '#3E4A00'
+
+hc attr theme.outer_color        '#454545'
+hc attr theme.active.outer_color '#AA00AA'
+
+hc attr theme.color              '#454545'
+hc attr theme.active.color       '#AA00AA'
+hc attr theme.urgent.color       orange
+
+hc attr theme.floating.active.color       '#006500'
+hc attr theme.floating.active.outer_color '#006500'
+
+hc set window_gap 1
 hc set smart_window_surroundings off
 hc set smart_frame_surroundings on
 hc set mouse_recenter_gap 0
@@ -184,36 +219,36 @@ hc set mouse_recenter_gap 0
 # rules
 hc unrule -F
 
-#hc rule class=XTerm tag=3 # move all xterms to tag 3
 hc rule focus=on # normally focus new clients
 hc rule floatplacement=smart
-#hc rule focus=off # normally do not focus new clients
-# give focus to most common terminals
-#hc rule class~'(.*[Rr]xvt.*|.*[Tt]erm|Konsole)' focus=on
 
 # Clients with fixed tags
-hc rule class=Code tag=code switchtag=on
-hc rule class=Clementine tag=media
-hc rule class=Opera tag=www
-hc rule class=org.remmina.Remmina tag=remote
-hc rule class="VirtualBox Machine" tag=remote
+hc rule class=Code                  tag=3 switchtag=on
+hc rule class=Clementine            tag=8
+hc rule class="Gimp-2.10"           tag=4 switchtag=on
+hc rule class="Inkscape"            tag=4 switchtag=on
+hc rule class=org.remmina.Remmina   tag=9
+hc rule class="VirtualBox Machine"  tag=9 switchtag=on 
 
 # floating clients
-hc rule class=Galculator    floating=on floatplacement=smart
+hc rule class=Galculator    floating=on floatplacement=center
 hc rule class=Gucharmap     floating=on floatplacement=smart
 hc rule class=gl            floating=on floatplacement=smart
 hc rule class=Lxappearance  floating=on floatplacement=smart
 hc rule class=matplotlib    floating=on floatplacement=smart
 hc rule class=Matplotlib    floating=on floatplacement=smart
-hc rule class=mpv           floating=on floatplacement=smart
+hc rule class=mpv           floating=on floatplacement=center
 hc rule class=Seahorse      floating=on floatplacement=center
 
-hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' floating=on
+hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' floating=on floatplacement=center
 hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG' focus=on
 hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK|DESKTOP)' manage=off
 
 hc set tree_style '╾│ ├└╼─┐'
 hc set swap_monitors_to_get_tag 1
+
+# set watch to trap layout changes for display in Polybar
+hc watch tags.focus.tiling.focused_frame.algorithm
 
 # unlock, just to be sure
 hc unlock
@@ -223,10 +258,9 @@ hc unlock
 # or simply:
 hc detect_monitors
 
-# start polybar panels
+# start polybar panel and related scripts. Also starts dunst if it is not already running
 ~/.config/polybar/panel.sh &
 
-# set focus to first monitor and position mouse top right
 hc focus_monitor 0
-xpos=$(hc list_monitors | rg "0:" | awk -F "x" '{ print $1 }' | awk '{ print $2-30 }')
+xpos=$(hc list_monitors | awk -F "x" '/0:/ { split($1,b," "); print b[2]-30 }')
 xte "mousemove $xpos 30"

@@ -1,8 +1,13 @@
 #!/bin/bash
-env > ~/env.txt
+# 2021-05-01 Moved dunst to ~/.config/herbstluftwm/autostart: font too big otherwise
+# 2021-10-15 Move application bindings to ~/.config/herbstluftwm/autostart
+# 2021-11-11 Move xfce4-power-manager to ~/.config/herbstluftwm/autostart. The power manager tries to call
+#            the notification service which will not have started yet. This leads to dunst core dumps.
+
+#env > ~/env.txt
 
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
-xbindkeys &
+# xbindkeys &
 
 # set screen layout
 ~/.screenlayout/display.sh
@@ -14,17 +19,11 @@ picom -b --experimental-backends
 setxkbmap -option compose:ralt
 
 # set wallpapers
-# ~/.fehbg
-nitrogen --restore &
-
-# start notification daemon
-dunst &
+~/.fehbg
+# nitrogen --restore &
 
 # start clipboard history manager
 greenclip daemon &
-
-# start power manager
-xfce4-power-manager &
 
 # set numlock
 numlockx &
