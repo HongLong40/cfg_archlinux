@@ -115,7 +115,7 @@ format-offset     =
     interval = 60
     exec = /home/edward/.config/polybar/get_info_cfg.sh
     format = <label>
-    label =  Changes: %output%
+    label =  %output%
     format-font = 2
     format-padding = 1
     format-margin = 1
@@ -215,12 +215,12 @@ format-offset     =
 [module/pacman_updates]
 # --{
     type = custom/ipc
-    hook-0 = echo " Updates: N/A"
-    hook-1 = echo " Updates: $(</tmp/pacman_updates.count)"
+    hook-0 = echo " N/A"
+    hook-1 = echo " $(</tmp/pacman_updates.count)"
     click-left = polybar-msg hook pacman_updates 2
     click-right = /home/edward/.config/polybar/get_info_pacman_updates.sh 2>/dev/null
     format = <output>
-    output =  Updates: %output%
+    output =  %output%
     format-font = 2
     format-padding = 1
     format-margin = 1
@@ -283,10 +283,10 @@ format-offset     =
 # --{ https://github.com/jaagr/polybar/wiki/Module:-xwindow
     type = internal/xwindow
     label = %title%
-    label-maxlen = 200
+    label-maxlen = 40
     format-background = ${colors.slate-t}
     format-font       = 3
-    format-padding    = 20
+    format-padding    = 2
     format-margin     = 0
 # --}
 
@@ -316,9 +316,9 @@ padding = 0
 enable-ipc = true
 ;cursor-scroll = ns-resize
 
-modules-left  = hlwm_workspaces hlwm_layout
-modules-center = xwindow
-modules-right = pulseaudio temperature memory cpu battery filesystem pacman_updates cfg cdate
+modules-left  = hlwm_workspaces hlwm_layout xwindow
+modules-center =
+modules-right = pulseaudio temperature memory cpu battery pacman_updates cfg cdate
 
 ###############################################################################
 # vim:ft=dosini
