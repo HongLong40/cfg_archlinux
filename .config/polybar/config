@@ -1,12 +1,21 @@
-## ==================================================================== ##
+## =================================================================================================== ##
+# 2021-06-26 Removed underlines from right-hand modules; added click-left action for pacman-ipc module
+# 2021-07-04 Removed transparency from slate-p color
+# 2021-09-26 Changed label-maxlen from 100 to 200
+# 2021-10-17 Added module info-hlwm-workspaces. Cleaned up file
+# 2021-10-23 Added module info-hlwm-layout
+# 2021-10-26 Added module info-pacman-updates-hc and replaced pacman_ipc in modules-right
+# 2021-10-28 Use IPC to update hlwm layout, hlwm workspaces and pacman updates.
+# 2021-10-31 Added mouse actions to hlwm layout, hlwm workspaces
+# 2021-11-07 Add right-click action to module/cfg
 
 [global/wm]
-;https://github.com/jaagr/polybar/wiki/Configuration#global-wm-settings
+# https://github.com/jaagr/polybar/wiki/Configuration#global-wm-settings
 margin-top = 0
 margin-bottom = 1
 
 [settings]
-;https://github.com/jaagr/polybar/wiki/Configuration#application-settings
+# https://github.com/jaagr/polybar/wiki/Configuration#application-settings
 throttle-output = 5
 screenchange-reload = true
 
@@ -15,10 +24,13 @@ screenchange-reload = true
 yellow = #FFFF00
 soft-white = #CFCFCF
 
-; slate triadic
-slate-p = #AA1A355B
-slate-s = #5B1A35
-slate-t = #355B1A
+# slate triadic
+slate-p = #1C3A63
+slate-s = #631C3A
+slate-t = #3A631C
+#slate-p = #1A355B
+#slate-s = #5B1A35
+#slate-t = #355B1A
 # --}
 
 ## ==================================================================== ##
@@ -44,6 +56,49 @@ format-margin     =
 format-offset     =
 
 ## == Modules ========================================================= ##
+[module/battery]
+# --{
+    type = internal/battery
+
+    ; This is useful in case the battery never reports 100% charge
+    full-at = 95
+
+    ; Use the following command to list batteries and adapters:
+    ; $ ls -1 /sys/class/power_supply/
+    battery = BAT1
+    adapter = ADP1
+
+    ; If an inotify event haven't been reported in this many
+    ; seconds, manually poll for new values.
+    ;
+    ; Needed as a fallback for systems that don't report events
+    ; on sysfs/procfs.
+    ;
+    ; Disable polling by setting the interval to 0.
+    ;
+    ; Default: 5
+    poll-interval = 15
+    time-format = %H:%M
+
+    label-charging = %{F#00FF00} %{F-} %percentage%% (%time%)
+    format-charging-padding = 1
+    format-charging-margin = 1
+    format-charging-font = 2
+    #format-charging-underline = #00ff00
+
+    label-discharging = %{F#FF0000} %{F-}  %percentage%% (%time%)
+    format-discharging-padding = 1
+    format-discharging-margin = 1
+    format-discharging-font = 2
+    #format-discharging-underline = #ff0000
+
+    label-full =  Full
+    format-full-font = 2
+    format-full-padding = 1
+    format-full-margin = 1
+    #format-full-underline = #aaaaaa
+# --}
+
 [module/cdate]
 # --{
     type = internal/date
@@ -54,49 +109,36 @@ format-offset     =
     format-font = 2
 # --}
 
-[module/ewmh]
-# --{ workspaces
-    type = internal/xworkspaces
-
-    pin-workspaces = false
-    enable-click = true
-    enable-scroll = true
-    reverse-scroll = true
-
-    ;extra icons to choose from
-    ;http://fontawesome.io/cheatsheet/
-
-    ;icon-0 = main;
-    ;icon-1 = sys;
-    ;icon-2 = vim;
-    ;icon-3 = misc;
-    ;icon-4 = vbox;
-    ;icon-5 = remote;
-    ;icon-6 = media;
-    ;icon-7 = 8;
-    ;icon-8 = 9;
-    ;#icon-9 = 10;
-    ;icon-default = " "
-
-    format = <label-state>
+[module/cfg]
+# --{
+    type = custom/script
+    interval = 60
+    exec = /home/edward/.config/polybar/get_info_cfg.sh
+    format = <label>
+    label =  Changes: %output%
     format-font = 2
+    format-padding = 1
+    format-margin = 1
+    #format-underline = #aaaa00
+    click-left = dunstctl history-pop
+    click-right=/home/edward/.config/polybar/get_info_cfg_status.sh
+# --}
 
-    ;label-monitor = %name%
+[module/cpu]
+# --{
+    type = internal/cpu
 
-    label-active = %name%
-    label-active-background = ${colors.slate-t}
-    label-active-padding = 4
+    ; Seconds to sleep between updates
+    ; Default: 1
+    interval = 1
 
-    label-urgent = %name%
-    label-urgent-background = #ff0000
-    label-urgent-padding = 4
+    format = <label>
 
-    label-empty = %name%
-    label-empty-padding = 4
-
-    label-occupied = %name%
-    label-occupied-background = ${colors.slate-s}
-    label-occupied-padding = 4
+    label =  %percentage%%
+    format-font = 2
+    format-padding = 1
+    format-margin = 1
+    #format-underline = #aa00aa
 # --}
 
 [module/filesystem]
@@ -123,76 +165,66 @@ format-offset     =
     format-mounted = <label-mounted>
     label-mounted =  %free%
     format-mounted-font = 2
-    format-mounted-padding = 2
-    format-mounted-underline = #00aaaa
+    format-mounted-padding = 1
+    format-mounted-margin = 1
+    #format-mounted-underline = #00aaaa
 # --}
 
-[module/xwindow]
-# --{ https://github.com/jaagr/polybar/wiki/Module:-xwindow
-    type = internal/xwindow
-    label = %title%
-    label-maxlen = 120
-
-    format-background = ${colors.slate-t}
-    format-font       = 3
-    format-padding    = 4
-    format-margin     = 4
-# --}
-
-[module/battery]
+[module/memory]
 # --{
-    type = internal/battery
-
-    ; This is useful in case the battery never reports 100% charge
-    full-at = 100
-
-    ; Use the following command to list batteries and adapters:
-    ; $ ls -1 /sys/class/power_supply/
-    battery = BAT1
-    adapter = ADP1
-
-    ; If an inotify event haven't been reported in this many
-    ; seconds, manually poll for new values.
-    ;
-    ; Needed as a fallback for systems that don't report events
-    ; on sysfs/procfs.
-    ;
-    ; Disable polling by setting the interval to 0.
-    ;
-    ; Default: 5
-    poll-interval = 15
-    time-format = %H:%M
-
-    label-charging = %{F#00FF00} %{F-} %percentage%% (%time%)
-    format-charging-padding = 2
-    format-charging-font = 2
-    format-charging-underline = #00ff00
-
-    label-discharging = %{F#FF0000} %{F-}  %percentage%% (%time%)
-    format-discharging-padding = 2
-    format-discharging-font = 2
-    format-discharging-underline = #ff0000
-
-    label-full =  Full
-    format-full-font = 2
-    format-full-padding = 2
-    format-full-underline = #aaaaaa
-# --}
-
-[module/cpu]
-# --{
-    type = internal/cpu
+    type = internal/memory
 
     ; Seconds to sleep between updates
     ; Default: 1
-    interval = 1
+    interval = 3
 
-    format = <label>
-
-    label =  %percentage%%
+    ;label = MEM %percentage_used%% = %mb_used% | %gb_free% | %gb_total%
+    label =  %percentage_used%% = %mb_used%
+    format-padding = 1
+    format-margin = 1
     format-font = 2
-    format-padding = 2
-    format-underline = #aa00aa
+    #format-underline = #00aa00
+# --}
+
+[module/hlwm_layout]
+# --{
+    type = custom/ipc
+    hook-0 = /home/edward/.config/polybar/get_info_hlwm_layout.sh
+    initial = 1
+    click-left = polybar-msg hook hlwm_layout 1
+    format = <output>
+    output = %{B#1A5920}    λ%output%    %{B-}
+    format-font = 1
+    format-padding = 0
+    format-margin = 0
+# --}
+
+[module/hlwm_workspaces]
+# --{
+    type = custom/ipc
+    hook-0 = /home/edward/.config/polybar/get_info_hlwm_workspaces.sh
+    initial = 1
+    click-right = polybar-msg hook hlwm_workspaces 1
+    format = <output>
+    output = %output%
+    format-font = 1
+    format-padding = 0
+    format-margin = 0
+# --}
+
+[module/pacman_updates]
+# --{
+    type = custom/ipc
+    hook-0 = echo " Updates: N/A"
+    hook-1 = echo " Updates: $(</tmp/pacman_updates.count)"
+    click-left = polybar-msg hook pacman_updates 2
+    click-right = /home/edward/.config/polybar/get_info_pacman_updates.sh 2>/dev/null
+    format = <output>
+    output =  Updates: %output%
+    format-font = 2
+    format-padding = 1
+    format-margin = 1
+    initial = 1
 # --}
 
 [module/pulseaudio]
@@ -206,100 +238,56 @@ format-offset     =
 
     ; Interval for volume increase/decrease (in percent points)
     ; Default: 5
-    interval = 2
+    interval = 1
 
     format-volume = <label-volume>
     label-volume =  %percentage%%
-    format-volume-padding = 2
+    format-volume-padding = 1
+    format-volume-margin = 1
     format-volume-font = 2
-    format-volume-underline = #aa00aa
+    #format-volume-underline = #aa00aa
 
     label-muted =  muted
     label-muted-foreground = #aaa
-    format-muted-padding = 2
+    format-muted-padding = 1
+    format-muted-margin = 1
     format-muted-font = 2
-    format-muted-underline = #00aaaa
+    #format-muted-underline = #00aaaa
 # --}
 
-[module/memory]
-# --{
-    type = internal/memory
-
-    ; Seconds to sleep between updates
-    ; Default: 1
-    interval = 3
-
-    ;label = MEM %percentage_used%% = %mb_used% | %gb_free% | %gb_total%
-    label =  %percentage_used%% = %mb_used%
-    format-padding = 2
-    format-font = 2
-    format-underline = #00aa00
-# --}
-
-[module/clementine]
+[module/temperature]
 # --{
     type = custom/script
-    exec-if = playerctl -p clementine status | grep -i "playing"
-    exec = playerctl -p clementine metadata --format '{{album}} - {{xesam:trackNumber}} - {{title}}'
-    interval = 5
+    interval = 10
+    exec = /home/edward/.config/polybar/get_info_temperature.awk <<< $(sensors)
     format = <label>
-    label =   %output%
-    format-font = 3
-# --}
-
-# [module/tagmon]
-# # --{
-#     type = custom/script
-#     interval = 1
-#     exec = ~/.config/herbstluftwm/hcstack.sh
-#     format-font = 2
-#     format-padding = 2
-# # --}
-
-#[module/pacman]
-## --{
-#    type = custom/script
-#    interval = 60
-#    exec = cat /tmp/pacman_updates.count
-#    format = <label>
-#    label =  Updates: %output%
-#    format-font = 2
-#    format-padding = 2
-#    format-underline = #fa00aa00
-## --}
-
-[module/pacman_ipc]
-# --{
-    type = custom/ipc
-    hook-0 = echo " Updates: N/A"
-    hook-1 = echo " Updates: $(</tmp/pacman_updates.count)"
-    format = <output>
-    output =  Updates: %output%
+    label =  Core %output%
     format-font = 2
-    format-padding = 2
-    format-underline = #fa00aa00
-    initial = 1
+    format-padding = 1
+    format-margin = 1
 # --}
 
-[module/cfg]
+[module/uptime]
 # --{
     type = custom/script
     interval = 60
-    exec = git --git-dir=$HOME/.cfg/ --work-tree=$HOME status --porcelain | wc -l
+    exec = /home/edward/.config/polybar/get_info_uptime.sh
     format = <label>
-    label =  Changes: %output%
+    label = Up %output%
     format-font = 2
-    format-padding = 2
-    format-underline = #faaa00aa
+    format-padding = 1
+    format-margin = 1
 # --}
 
-[module/hlwm-monitor0]
-# --{
-    type = custom/script
-    exec = /home/edward/.config/polybar/hlwm-monitor0.sh
-    tail = true
-    scroll-up = herbstclient use_index -1 --skip-visible &
-    scroll-down = herbstclient use_index +1 --skip-visible &
+[module/xwindow]
+# --{ https://github.com/jaagr/polybar/wiki/Module:-xwindow
+    type = internal/xwindow
+    label = %title%
+    label-maxlen = 200
+    format-background = ${colors.slate-t}
+    format-font       = 3
+    format-padding    = 20
+    format-margin     = 0
 # --}
 
 ## ==================================================================== ##
@@ -320,7 +308,7 @@ font-5 = "Font Awesome 5 Brands:pixelsize=10;1"
 wm-name = 
 separator = 
 underline-size = 2
-;padding-right = 3
+padding = 0
 
 ;tray-position = right
 ;dim-value = 0.1
@@ -328,13 +316,9 @@ underline-size = 2
 enable-ipc = true
 ;cursor-scroll = ns-resize
 
-modules-left  = ewmh xwindow
-modules-center =
-modules-right = pulseaudio memory cpu battery filesystem pacman_ipc cfg cdate
-
-[bar/slate-tray]
-inherit = bar/slate
-;tray-position = right
+modules-left  = hlwm_workspaces hlwm_layout
+modules-center = xwindow
+modules-right = pulseaudio temperature memory cpu battery filesystem pacman_updates cfg cdate
 
 ###############################################################################
 # vim:ft=dosini
