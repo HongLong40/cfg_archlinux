@@ -2,9 +2,8 @@ configuration {
     modi: "run,window,drun,combi";
     combi-modi: "window,drun";
     display-combi: "🗔 ";
-    theme: "current";
     font: "JetBrains Mono 12";
-    // show-icons: true;
+    show-icons: true;
     // scrollbar-width: 0;
     // width: 60;
     monitor: "-4";
@@ -12,6 +11,7 @@ configuration {
     // yoffset: 100;
     terminal: "alacritty";
 }
-element-icon {
-    size: 48;
-}
+@theme "current"
+//element-icon {
+//    size: 48;
+//}
