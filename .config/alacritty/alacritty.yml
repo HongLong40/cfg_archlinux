@@ -30,8 +30,8 @@ window:
   # must be at least `2`, while using a value of `0` for columns and lines will
   # fall back to the window manager's recommended size.
   dimensions:
-    columns: 104
-    lines: 53
+    columns: 0
+    lines: 0
 
   # Window position (changes require restart)
   #
@@ -63,6 +63,12 @@ window:
   #     - buttonless: Title bar, transparent background and no title bar buttons
   decorations: full
   #decorations: none
+
+  # Background opacity
+  #
+  # Window opacity as a floating point number from `0.0` to `1.0`.
+  # The value `0.0` is completely transparent and `1.0` is opaque.
+  opacity: 0.9
 
   # Startup Mode (changes require restart)
   #
@@ -187,7 +193,7 @@ draw_bold_text_with_bright_colors: true
 colors:
   # Default colors
   primary:
-    background: '#010e17'
+    background: '#030303'
     #background: '#1d1f21'
     foreground: '#cfcfcf'
     #foreground: '#c5c8c6'
@@ -264,20 +270,20 @@ colors:
     red:     '#cc0000'
     green:   '#4e9a06'
     yellow:  '#c4a000'
-    blue:    '#3465a4'
-    magenta: '#75507b'
+    blue:    '#3d77c2'
+    magenta: '#9d6298'
     cyan:    '#06989a'
     white:   '#d3d7cf'
 
   # Bright colors
   bright:
     black:   '#555753'
-    red:     '#ef2929'
-    green:   '#8ae234'
-    yellow:  '#fce94f'
+    red:     '#ff0000'
+    green:   '#96f73b'
+    yellow:  '#ffe880'
     blue:    '#739fcf'
     magenta: '#ad7fa8'
-    cyan:    '#34e2e2'
+    cyan:    '#3bf4f7'
     white:   '#eeeeec'
 
   # Dim colors
@@ -302,7 +308,7 @@ colors:
   # Example:
   #   `- { index: 16, color: '#ff00ff' }`
   #
-  #indexed_colors: []
+  #indexed_colors: [ { index: 16, color: '#ff00ff' }]
 
 # Bell
 #
@@ -344,12 +350,6 @@ colors:
   #     args: ["Hello, World!"]
   #
   #command: None
-
-# Background opacity
-#
-# Window opacity as a floating point number from `0.0` to `1.0`.
-# The value `0.0` is completely transparent and `1.0` is opaque.
-background_opacity: 0.95 
 
 selection:
   # This string contains all characters that are used as separators for
@@ -690,7 +690,8 @@ selection:
 #
 # If the same trigger is assigned to multiple actions, all of them are executed
 # in the order they were defined in.
-#key_bindings:
+key_bindings:
+  - { key: Return,     mods: Control|Shift,              action: SpawnNewInstance }
   #- { key: Paste,                                       action: Paste          }
   #- { key: Copy,                                        action: Copy           }
   #- { key: L,         mods: Control,                    action: ClearLogNotice }

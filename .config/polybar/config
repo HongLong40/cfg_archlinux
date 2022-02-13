@@ -80,19 +80,19 @@ format-offset     =
     poll-interval = 15
     time-format = %H:%M
 
-    label-charging = %{F#00FF00} %{F-} %percentage%% (%time%)
+    label-charging = %{F#FFE880}%{F-}  %percentage%% (%time%)
     format-charging-padding = 1
     format-charging-margin = 1
     format-charging-font = 2
     #format-charging-underline = #00ff00
 
-    label-discharging = %{F#FF0000} %{F-}  %percentage%% (%time%)
+    label-discharging = %{F#FF0000}%{F-}  %percentage%% (%time%)
     format-discharging-padding = 1
     format-discharging-margin = 1
     format-discharging-font = 2
     #format-discharging-underline = #ff0000
 
-    label-full =  Full
+    label-full = %{F#00DD00}%{F-}  Full
     format-full-font = 2
     format-full-padding = 1
     format-full-margin = 1
@@ -115,7 +115,7 @@ format-offset     =
     interval = 60
     exec = /home/edward/.config/polybar/get_info_cfg.sh
     format = <label>
-    label =  %output%
+    label =    %output%
     format-font = 2
     format-padding = 1
     format-margin = 1
@@ -134,7 +134,7 @@ format-offset     =
 
     format = <label>
 
-    label =  %percentage%%
+    label =    %percentage%%
     format-font = 2
     format-padding = 1
     format-margin = 1
@@ -163,7 +163,7 @@ format-offset     =
     spacing = 4
 
     format-mounted = <label-mounted>
-    label-mounted =  %free%
+    label-mounted =    %free%
     format-mounted-font = 2
     format-mounted-padding = 1
     format-mounted-margin = 1
@@ -179,7 +179,7 @@ format-offset     =
     interval = 3
 
     ;label = MEM %percentage_used%% = %mb_used% | %gb_free% | %gb_total%
-    label =  %percentage_used%% = %mb_used%
+    label = ɱ  %percentage_used%% = %mb_used%
     format-padding = 1
     format-margin = 1
     format-font = 2
@@ -215,8 +215,8 @@ format-offset     =
 [module/pacman_updates]
 # --{
     type = custom/ipc
-    hook-0 = echo " N/A"
-    hook-1 = echo " $(</tmp/pacman_updates.count)"
+    hook-0 = echo "  N/A"
+    hook-1 = echo "  $(</tmp/pacman_updates.count)"
     click-left = polybar-msg hook pacman_updates 2
     click-right = /home/edward/.config/polybar/get_info_pacman_updates.sh 2>/dev/null
     format = <output>
@@ -241,13 +241,13 @@ format-offset     =
     interval = 1
 
     format-volume = <label-volume>
-    label-volume =  %percentage%%
+    label-volume =    %percentage%%
     format-volume-padding = 1
     format-volume-margin = 1
     format-volume-font = 2
     #format-volume-underline = #aa00aa
 
-    label-muted =  muted
+    label-muted =    muted
     label-muted-foreground = #aaa
     format-muted-padding = 1
     format-muted-margin = 1
@@ -259,9 +259,9 @@ format-offset     =
 # --{
     type = custom/script
     interval = 10
-    exec = /home/edward/.config/polybar/get_info_temperature.awk <<< $(sensors)
+    exec = sensors | awk -f /home/edward/.config/polybar/get_info_temperature.awk
     format = <label>
-    label =  Core %output%
+    label =   Core %output%
     format-font = 2
     format-padding = 1
     format-margin = 1
@@ -283,7 +283,7 @@ format-offset     =
 # --{ https://github.com/jaagr/polybar/wiki/Module:-xwindow
     type = internal/xwindow
     label = %title%
-    label-maxlen = 40
+    label-maxlen = 25
     format-background = ${colors.slate-t}
     format-font       = 3
     format-padding    = 2
@@ -301,9 +301,7 @@ height = 24
 font-0 = Roboto-Regular:size=10;2
 font-1 = Roboto-Regular:bold:size=10;2
 font-2 = Roboto-Regular:italic:bold:size=10;2
-font-3 = "Font Awesome 5 Free:style=Regular:pixelsize=10;1"
-font-4 = "Font Awesome 5 Free:style=Solid:pixelsize=10;1"
-font-5 = "Font Awesome 5 Brands:pixelsize=10;1"
+font-3 = "JetBrainsMono Nerd Font:style=Regular:pixelsize=12;2"
 
 wm-name = 
 separator = 
@@ -318,7 +316,7 @@ enable-ipc = true
 
 modules-left  = hlwm_workspaces hlwm_layout xwindow
 modules-center =
-modules-right = pulseaudio temperature memory cpu battery pacman_updates cfg cdate
+modules-right = pulseaudio temperature memory cpu battery filesystem pacman_updates cfg cdate
 
 ###############################################################################
 # vim:ft=dosini

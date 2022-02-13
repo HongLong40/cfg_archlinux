@@ -5,6 +5,7 @@ ZSH="/usr/share/zsh/custom"
 fpath=("$ZSH" "$fpath[@]")
 autoload -Uz compinit promptinit; compinit; promptinit
 
+
 # Uncomment the following line if you want to change the command execution time
 # stamp shown in the history command output.
 # You can set one of the optional three formats:
@@ -43,11 +44,6 @@ source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring
 
 # vim style keys for searching history - widgets are defined in zsh-history-substring-search.zsh,
 # so need to bind keys after sourcing the file.
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M viins '^k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
-bindkey -M viins '^j' history-substring-search-down
-
 bindkey -M vicmd "${terminfo[kcuu1]}" history-substring-search-up
 bindkey -M viins "${terminfo[kcuu1]}" history-substring-search-up
 bindkey -M vicmd "$terminfo[kcud1]" history-substring-search-down
@@ -72,41 +68,7 @@ alias _='sudo '
 # bindkey -v
 # export KEYTIMEOUT=5
 
-# Change cursor shape and right-prompt for different vi modes.
-vim_ins_mode="%F{cyan}ins%f"
-vim_cmd_mode="%F{magenta}cmd%f"
-vim_mode=$vim_ins_mode
-
-prompt_end_ins_char="❯"
-prompt_end_cmd_char="ᛞ"
-prompt_end_char=$prompt_end_ins_char
-
-function zle-keymap-select {
-    vim_mode="${${KEYMAP/vicmd/${vim_cmd_mode}}/(main|viins)/${vim_ins_mode}}"
-
-    if [[ ${KEYMAP} == vicmd ]] {
-        # blinking underline cursor
-        prompt_end_char=$prompt_end_cmd_char
-        echo -ne '\e[3 q'
-    } else {
-        # underline cursor
-        prompt_end_char=$prompt_end_ins_char
-        echo -ne '\e[4 q'
-    }
-
-    zle reset-prompt
-}
-zle -N zle-keymap-select
-
-function zle-line-finish {
-    vim_mode=$vim_ins_mode
-    prompt_end_char=$prompt_end_ins_char
-}
-zle -N zle-line-finish
-
-#setopt prompt_subst
 prompt edward yellow
-RPROMPT='${vim_mode}'
 
 echo -ne '\e[4 q' # Use underline shape cursor on startup.
 

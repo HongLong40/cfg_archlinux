@@ -34,6 +34,8 @@ then
     done
 fi
 
+/usr/bin/gnome-keyring-daemon --start --foreground --components=secrets &
+
 # start herbstluftwm. The --locked option eliminates flickering while wm starts
 exec herbstluftwm --locked
 # exec i3
