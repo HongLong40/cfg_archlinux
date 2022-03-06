@@ -1,21 +1,28 @@
 #!/bin/zsh
 
 typeset PROGNAME=$(basename $0)
+typeset PIDFILE="/tmp/check_pacman_updates.pid"
 
 # check if script is already running
-for pid in $(pidof -x $PROGNAME)
-do
-    echo $pid
-    if [[ $pid != $$ ]]
+if [[ -f $PIDFILE ]]
+then
+    pid=$(<${PIDFILE})
+
+    if kill -0 $pid
     then
         echo "[$(date)] : $PROGNAME: Process is already running with PID $pid"
         exit 1
     fi
-done
+fi
+
+# create pid file
+echo $$ > $PIDFILE
+
 
 TRAPHUP TRAPTERM() {
-    echo "[$(date)] : $PROGNAME stopped" >> /tmp/${PROGNAME}.log
+echo "[$(date)] : $PROGNAME (${pid_main}) stopped" >> /tmp/${PROGNAME}.log
     rm -f /tmp/pacman_updates*
+    rm -f $PIDFILE
     exit 0
 }
 
@@ -23,7 +30,6 @@ TRAPUSR1() {
     write_log "refreshing update counts"
     kill $pid 2> /dev/null || true
 }
-
 
 # Defaults
 typeset CONFIG=$HOME/.config/polybar/check_pacman_updates.config 
@@ -56,7 +62,7 @@ check_update() {
     if [[ ($last_update_count -ne $curr_update_count) ]]
     then
         last_update_count=$curr_update_count
-        polybar-msg hook ${pbc[hook_name]} ${pbc[hook_id]} || true
+        polybar-msg action "#${pbc[hook_name]}.hook.${pbc[hook_id]}" || true
         if [[ $curr_update_count -ne 0 ]]; then
             notify-send -t 5000 "$curr_update_count Pacman Update(s) Available"
         fi
