@@ -258,9 +258,10 @@ hc unlock
 # or simply:
 hc detect_monitors
 
-# start polybar panel and related scripts. Also starts dunst if it is not already running
-~/.config/polybar/panel.sh &
-
 hc focus_monitor 0
 xpos=$(hc list_monitors | awk -F "x" '/0:/ { split($1,b," "); print b[2]-30 }')
 xte "mousemove $xpos 30"
+
+# start polybar panel and related scripts. Also starts dunst if it is not already running
+sleep 1
+~/.config/polybar/panel.sh &

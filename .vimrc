@@ -12,10 +12,10 @@ syntax on
 " --- Color scheme, highlights, font and cursors -----------------------------
 colorscheme industry
 "highlight Normal guifg=#cfcfcf guibg=#010e17
-highlight Normal guifg=#cfcfcf guibg=#01101c
+highlight Normal guifg=#cfcfcf guibg=#01101c ctermbg=234
 highlight LineNr guifg=DarkYellow
 highlight CursorLineNr gui=none guifg=red cterm=none ctermfg=darkred
-highlight CursorLine guibg=Grey15 cterm=none ctermbg=DarkBlue
+highlight CursorLine guibg=Grey15 cterm=none ctermbg=18
 highlight iCursor guifg=bg guibg=red
 highlight Folded  term=standout ctermfg=11 ctermbg=8 guifg=DarkRed guibg=DarkGrey
 highlight MatchParen guibg=DarkBlue
@@ -60,17 +60,16 @@ vnoremap <silent> tu :s/\[✓\]/\[ \]/
 " --- Status Line ------------------------------------------------------------
 set laststatus=2
 set statusline=
-set statusline+=\ %n\ -\ %<%t%h%M
+set statusline+=\ %n\ -\ %<%f%h%M
 set statusline+=%=
 set statusline+=%{&fileencoding?&fileencoding:&encoding}
-set statusline+=:%{&fileformat}
-set statusline+=\ │\ %5.5b\ │\ %04.4B\ │\ line\ %05.5l/%05.5L\ col\ %03.3v
+set statusline+=:%{&fileformat}\ %y
+set statusline+=\ │\ %5.5l:%-3.3v
 set statusline+=\ 
 
 " --- Settings (general) -----------------------------------------------------
 set splitbelow splitright
 set title
-set showmode
 set autoindent
 set number relativenumber
 set showmatch
@@ -86,7 +85,7 @@ set foldmarker=--{,--}
 
 " --- Abbreviations and Ligatures --------------------------------------------
 iabbrev ... …
-iabbrev -> ➔
+iabbrev ->  →
 iabbrev bbb [ ]
 iabbrev bvb [✓]
 
@@ -97,6 +96,11 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 nnoremap <C-a> ggVG
 
+"if !has('gui_running')
+"    let g:powerline_loaded = 0
+"    set showmode
+"endif
+
 if has('gui_running')
     " toolbar and scrollbars
     set guioptions-=T     " remove toolbar
@@ -104,4 +108,7 @@ if has('gui_running')
     set guioptions-=r     " right scroll bar
     set guioptions-=b     " bottom scroll bar
     set guioptions-=h     " only calculate bottom scroll size of current line
+    set noshowmode        " to avoid duplication in powerline status bar
 endif
+
+set noshowmode
