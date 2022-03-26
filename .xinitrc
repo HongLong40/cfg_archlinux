@@ -35,6 +35,7 @@ then
 fi
 
 /usr/bin/gnome-keyring-daemon --start --foreground --components=secrets &
+lxpolkit &
 
 # start herbstluftwm. The --locked option eliminates flickering while wm starts
 exec herbstluftwm --locked

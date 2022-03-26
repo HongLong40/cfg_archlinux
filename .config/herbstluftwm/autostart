@@ -1,27 +1,5 @@
 #!/usr/bin/env zsh
 
-# config for herbstluftwm
-# 2021-05-01 Add dunst notification daemon
-# 2021-05-02 Add rule for "VirtualBox Machine" → tag: remote
-# 2021-05-28 Detect right-top edge and position mouse there
-# 2021-06-05 Update to 0.9.3: The setting default_frame_layout now holds an algorithm name
-# 2021-10-03 changed floatplacement for dialogs; mpv
-# 2021-10-09 changed floating border width and inactive color
-# 2021-10-10 reset workspace name to standard [1..9]
-#            removed arrow keys for frame & window navigation (use hjkl keys only)
-# 2021-10-13 modified various theme elements
-# 2021-10-14 cleaned up theme elements
-# 2021-10-15 reset movement keybinds to use arrow keys
-#            added keybinds to set layouts horizontal, vertical and max directly
-# 2021-10-16 moved all application keybinds back to HLWM; misc. tweaks
-# 2021-10-19 use $Mod-space for rofi application menu; $Mod-l to cycle layouts
-# 2021-10-23 added watch tags.focus.tiling.focused_frame.algorithm
-# 2021-10-31 don't run conky
-# 2021-11-09 moved dunst startup to bottom of script, to ensure that window manager has started
-# 2021-11-11 moved dunst to panel.sh script, to better intergrate with polybar handling
-#            start xfce4-power-manager here instead of in ~/.xprofile, as it requires the notification
-#            daemon (dunst) which itself requires X to be running and have $DISPLAY set.
-
 hc() { herbstclient "$@" }
 
 run() { if ! pgrep -f $1 ; then $@&; fi }
@@ -61,8 +39,8 @@ hc keybind $Mod-Return  spawn alacritty
 hc keybind $Mod-space   spawn rofi -show combi
 hc keybind $Mod-p       spawn rofi -modi "clipboard:greenclip print" -show clipboard -run-command '{cmd}'
 
-hc keybind $Mod-b       chain : lock : use_index 4 : spawn brave : unlock             # browser → tag 5
-hc keybind $Mod-Shift-b chain : lock : use_index 5 : spawn brave --incognito : unlock # browser (private) → tag 6
+hc keybind $Mod-b       chain : lock : use_index 4 : spawn vivaldi-stable : unlock             # browser → tag 5
+hc keybind $Mod-Shift-b chain : lock : use_index 5 : spawn vivaldi-stable --incognito : unlock # browser (private) → tag 6
 
 hc keybind Print          spawn flameshot gui  # screen capture
 hc keybind XF86Calculator spawn galculator     # calculator
