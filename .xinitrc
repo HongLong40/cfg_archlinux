@@ -34,10 +34,12 @@ then
     done
 fi
 
-/usr/bin/gnome-keyring-daemon --start --foreground --components=secrets &
-lxpolkit &
+#/usr/bin/gnome-keyring-daemon --start --foreground --components=secrets &
+#lxpolkit &
 
 # start herbstluftwm. The --locked option eliminates flickering while wm starts
 exec herbstluftwm --locked
+#exec xmonad
+#dbus-launch leftwm
 # exec i3
 #qtile start

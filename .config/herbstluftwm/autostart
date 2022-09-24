@@ -236,6 +236,24 @@ hc unlock
 # or simply:
 hc detect_monitors
 
+typeset -a monitor_list
+typeset -a rect
+
+for m in $(hc list_monitors | cut -d: -f1)
+do
+    rect=( $(hc monitor_rect $m) )
+
+    if [[ $m -eq "0" ]]
+    then
+        rect[2]=25
+        rect[4]=$(( ${rect[4]} - 25 ))
+    fi
+
+    monitor_list+="${rect[3]}x${rect[4]}+${rect[1]}+${rect[2]}"
+done
+
+hc set_monitors $monitor_list
+
 hc focus_monitor 0
 xpos=$(hc list_monitors | awk -F "x" '/0:/ { split($1,b," "); print b[2]-30 }')
 xte "mousemove $xpos 30"
