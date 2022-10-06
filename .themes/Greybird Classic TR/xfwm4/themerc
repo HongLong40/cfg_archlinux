@@ -1,8 +1,0 @@
-# Black theme with Crystal Vista buttons for Xfce
-show_app_icon=true
-button_offset=2
-button_spacing=0
-maximized_offset=1
-full_width_title=true
-active_text_color=#FFFFFF
-inactive_text_color=#D9D9D9
