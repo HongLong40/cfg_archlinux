@@ -151,76 +151,10 @@ hc keybind $Mod-c cycle
 hc keybind $Mod-i jumpto urgent
 
 # theme
-hc attr theme.tiling.reset 1
-hc attr theme.floating.reset 1
-hc attr theme.background_color '#141414'
-
-# frame
-hc set frame_padding 0
-hc set frame_gap 6
-hc set frame_border_width 1
-hc set frame_transparent_width 4
-
-hc set always_show_frame on
-hc set frame_bg_transparent on
-
-hc set frame_border_active_color '#AA00AA'
-hc set frame_bg_active_color     '#555555'
-hc set frame_border_normal_color '#101010'
-hc set frame_bg_normal_color     '#004000'
-
-# window border: border_width = inner_width + outer_width + {remaining width (color)}
-hc attr theme.border_width 3
-hc attr theme.inner_width 1
-hc attr theme.outer_width 1
-hc attr theme.floating.border_width 6
-
-# colors
-hc attr theme.inner_color        '#202020'
-hc attr theme.active.inner_color '#3E4A00'
-
-hc attr theme.outer_color        '#454545'
-hc attr theme.active.outer_color '#AA00AA'
-
-hc attr theme.color              '#454545'
-hc attr theme.active.color       '#AA00AA'
-hc attr theme.urgent.color       orange
-
-hc attr theme.floating.active.color       '#006500'
-hc attr theme.floating.active.outer_color '#006500'
-
-hc set window_gap 1
-hc set smart_window_surroundings off
-hc set smart_frame_surroundings on
-hc set mouse_recenter_gap 0
+~/.config/herbstluftwm/theme
 
 # rules
-hc unrule -F
-
-hc rule focus=on # normally focus new clients
-hc rule floatplacement=smart
-
-# Clients with fixed tags
-hc rule class=Code                  tag=3 switchtag=on
-hc rule class=Clementine            tag=8
-hc rule class="Gimp-2.10"           tag=4 switchtag=on
-hc rule class="Inkscape"            tag=4 switchtag=on
-hc rule class=org.remmina.Remmina   tag=9
-hc rule class="VirtualBox Machine"  tag=9 switchtag=on 
-
-# floating clients
-hc rule class=Galculator    floating=on floatplacement=center
-hc rule class=Gucharmap     floating=on floatplacement=smart
-hc rule class=gl            floating=on floatplacement=smart
-hc rule class=Lxappearance  floating=on floatplacement=smart
-hc rule class=matplotlib    floating=on floatplacement=smart
-hc rule class=Matplotlib    floating=on floatplacement=smart
-hc rule class=mpv           floating=on floatplacement=center
-hc rule class=Seahorse      floating=on floatplacement=center
-
-hc rule windowtype~'_NET_WM_WINDOW_TYPE_(DIALOG|UTILITY|SPLASH)' floating=on floatplacement=center
-hc rule windowtype='_NET_WM_WINDOW_TYPE_DIALOG' focus=on
-hc rule windowtype~'_NET_WM_WINDOW_TYPE_(NOTIFICATION|DOCK|DESKTOP)' manage=off
+~/.config/herbstluftwm/rules
 
 hc set tree_style '╾│ ├└╼─┐'
 hc set swap_monitors_to_get_tag 1

@@ -1,0 +1,66 @@
+#!/usr/bin/zsh
+
+# configure theme for herbstluftwm
+
+typeset -a cmds=()
+
+function hc() { cmds+=("X" "$@") }
+
+hc lock
+
+# theme
+hc attr theme.tiling.reset 1
+hc attr theme.floating.reset 1
+hc attr theme.background_color '#141414'
+
+# frame
+hc set frame_padding 0
+hc set frame_gap 6
+hc set frame_border_width 0
+hc set frame_transparent_width 4
+
+hc set show_frame_decorations none
+hc set frame_bg_transparent on
+
+ACTIVE_COLOR='#5E81AC'
+hc set frame_border_active_color $ACTIVE_COLOR
+hc set frame_bg_active_color     '#555555'
+hc set frame_border_normal_color '#101010'
+hc set frame_bg_normal_color     '#004000'
+
+# window border: border_width = inner_width + outer_width + {remaining width (color)}
+hc attr theme.border_width 3
+hc attr theme.inner_width 1
+hc attr theme.outer_width 1
+hc attr theme.floating.border_width 6
+
+# tabs (for max layout)
+hc attr theme.title_when multiple_tabs
+hc attr theme.title_height 12
+hc attr theme.title_font Roboto:size=10:italic
+hc attr theme.title_depth 4
+
+# colors
+hc attr theme.inner_color        '#202020'
+hc attr theme.active.inner_color '#3E4A00'
+
+hc attr theme.outer_color        '#454545'
+hc attr theme.active.outer_color $ACTIVE_COLOR
+
+hc attr theme.color              '#454545'
+hc attr theme.active.color       $ACTIVE_COLOR
+hc attr theme.urgent.color       orange
+
+hc attr theme.floating.active.color       '#006500'
+hc attr theme.floating.active.outer_color '#006500'
+
+hc set window_gap 1
+hc set smart_window_surroundings off
+hc set smart_frame_surroundings hide_all
+hc set mouse_recenter_gap 0
+
+hc unlock
+
+herbstclient chain ${cmds}
+
+echo ${cmds} > $HOME/.config/herbstluftwm/cmds.theme
