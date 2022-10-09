@@ -1,7 +1,7 @@
 #!/bin/env zsh
 
 # Load profile
-for file in "/etc/profile" "$HOME/.profile" "/etc/xprofile" "$HOME/.xprofile"
+for file in "/etc/profile" "$HOME/.profile" "/etc/xprofile" "$HOME/.config/X11/xprofile"
 do
     if [ -f "$file" ]
     then
@@ -11,7 +11,7 @@ do
 done
 
 # Load resources
-for file in "/etc/X11/Xresources" "$HOME/.Xresources"
+for file in "/etc/X11/Xresources" "$HOME/.config/X11/Xresources"
 do
     if [ -f "$file" ]
     then
@@ -34,12 +34,6 @@ then
     done
 fi
 
-#/usr/bin/gnome-keyring-daemon --start --foreground --components=secrets &
-#lxpolkit &
-
 # start herbstluftwm. The --locked option eliminates flickering while wm starts
 exec herbstluftwm --locked
-#exec xmonad
-#dbus-launch leftwm
-# exec i3
-#qtile start
+

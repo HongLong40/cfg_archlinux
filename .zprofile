@@ -1,5 +1,6 @@
 #!/bin/env zsh
-if [[ "$(tty)" == "/dev/tty1" ]]; then
-    startx
-fi
 
+if [[ -z "${DISPLAY}" ]] && [[ "${XDG_VTNR}" -eq 1 ]]
+then
+        exec startx  ${XDG_CONFIG_HOME}/X11/xinitrc
+fi
