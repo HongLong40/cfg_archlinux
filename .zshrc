@@ -18,19 +18,12 @@ autoload -Uz compinit promptinit; compinit; promptinit
 export LANG=en_US.UTF-8
 export LS_COLORS='rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=1;35:st=37;44:ex=01;32:'
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-export MAKEFLAGS="-j5 -l4"
-
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 export BC_ENV_ARGS=$HOME/.bcrc
-export EDITOR=vim
 export PATH="/usr/lib/ccache/bin/:$PATH"
-export HOSTNAME=$(print -P %m)
 export USERNAME
-export RIPGREP_CONFIG_PATH=$HOME/.ripgreprc
 export EXA_COLORS='uu=35'
 
 # Load custom configurations
